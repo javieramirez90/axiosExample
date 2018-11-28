@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <h1>Iron personas:</h1>
+
+  <form onsubmit="addCharacter(this)" style="display:inherit" action="">
+      <input placeholder="Nombre" name="name" type="text"><br>
+      <input placeholder="Ocupación" name="occupation" type="text"><br>
+      <input placeholder="Arma" name="weapon" type="text"><br>
+      <input type="submit">
+  </form>
+  <hr>
+
+  <table border="1">
+    <tr>
+      <th>id</th>
+      <th>Name</th>
+      <th>Occupation</th>
+      <th>Weapon</th>
+      <th>Editar</th>
+      <th>Delete</th>
+    </tr>
+  </table>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+  <script src="./main.js"></script>
+</body>
+</html>
