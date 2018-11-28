@@ -1,99 +1,82 @@
-const url = " https://ih-crud-api.herokuapp.com/characters"
+const url = "https://ih-crud-api.herokuapp.com/characters/";
 let exists = false;
 
+function editCharacter(e) {
+  // conseguir los datos si tenemos el id
+  axios.get(url + e.name).then(result => {
+    exists = result.data.id;
+    const form = document.querySelector("form");
+    // los colocamos en el form
+    form.name.value = result.data.name;
+    form.occupation.value = result.data.occupation;
+    form.weapon.value = result.data.weapon;
+  });
+  // si el usuario guarda ya no estamos aqui (addCharacter)
+}
 
-function addCharacter(e){
-  
-  e.preventDefault()
-  console.log(e)
+function addCharacter(e) {
+  e.preventDefault();
   const char = {
     name: e.target.name.value,
     occupation: e.target.occupation.value,
     weapon: e.target.weapon.value
+  };
+  if (exists) {
+    return axios.patch(url + exists, char).then(result => {
+      getCharacters();
+      exists = false;
+    });
   }
-
-  if(exists) {
-    return axios.patch(url + exists, char)
-  }
-
-  axios.post(url, char)
-    .then(result => {
-      exists = results.data.is
-      resetTable()
-      getCharacters()
-    }
-    
-  );
-
+  axios.post(url, char).then(result => {
+    getCharacters();
+  });
 }
 
-function editCharacter(e){
-  console.log(e.name)
-  //conseguir los datos que tenems por id
-  axios.get(url + e.name)
-    .then(result => {
-      const form = document.querySelector("form")
-      form.name.value = result.data.name;
-      form.occupation.value = result.data.occupation;
-      form.weapon.value = result.data.weapon;
-
-    })
-  //los colocamos en el form
-  //si el usuario guarda, ya no estamos en esta función si no en addchar
-}
-
-function resetTable(){
-  const table = document.querySelector("table");
-      table.innerHTML= `
-        <tr>
-          <th>id</th>
-          <th>Name</th>
-          <th>Occupation</th>
-          <th>Weapon</th>
-          <th>Delete</th>
-      </tr>
-      `;
-}
-
-
-function deleteCharacter(e){
+function deleteCharacter(e) {
+  if (!confirm("¿Seguro de borrar?")) return;
   const id = e.id;
   console.log(id);
-
-  axios.delete(url + id)
-    .then(result => {
-      resetTable();
-      getCharacters();
-    })
+  axios.delete(url + id).then(result => {
+    getCharacters();
+  });
 }
 
-
-function getCharacters(){
-  const table = document.querySelector('table');
-  axios.get(url)
-  .then(result => {
-    result.data //This is an array
+function getCharacters() {
+  const form = document.querySelector("form");
+  form.name.value = "";
+  form.occupation.value = "";
+  form.weapon.value = "";
+  const table = document.querySelector("table");
+  table.innerHTML = `      <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Occupation</th>
+      <th>weapon</th>
+      <th>Delete</th>
+      <th>Edit</th>
+    </tr>`;
+  axios.get(url).then(result => {
+    // array!!!!
     result.data.forEach(c => {
-      var tr = document.createElement('tr');
+      var tr = document.createElement("tr");
       tr.innerHTML = `
-      <tr>
-      <td>${ c.id }</td>
-      <td>${ c.name }</td>
-      <td>${ c.occupation }</td>
-      <td>${ c.weapon }</td>
-      <td><button class="editar" onclick="editCharacter(this)" name="${c.id}">X</button></td>
-      <td><button class="borrar" onclick="deleteCharacter(this)" id="${c.id}">X</button></td>
-    </tr>
-      `
+        <td>${c.id}</td>
+        <td>${c.name}</td>
+        <td>${c.occupation}</td>
+        <td>${c.weapon}</td>
+        <td><button onclick="deleteCharacter(this)" class="borrar" id="${
+          c.id
+        }" >X</button></td> 
+        <td><button onclick="editCharacter(this)" class="editar" name="${
+          c.id
+        }" >Edit</button></td>  
+        `;
       table.appendChild(tr);
-
-      
-    })
-  })
+    });
+  });
 }
-
-// document.querySelector(".borrar").addEventListener('click', deleteCharacter);
 
 getCharacters();
 
-document.querySelector('form').addEventListener("submit", addCharacter)
+//listeners
+document.querySelector("form").addEventListener("submit", addCharacter);
